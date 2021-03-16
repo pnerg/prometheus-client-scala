@@ -1,0 +1,26 @@
+name: Build & Test
+
+on: [push, pull_request]
+
+# cross-version steps run separately for clarity as well as circumventing issues with running out of meta-space
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run cross-version tests for 2.11
+        run: sbt '++ 2.11.12 test'
+      - name: Run cross-version tests for 2.12
+        run: sbt '++ 2.12.12 test'
+      - name: Run cross-version tests for 2.13
+        run: sbt '++ 2.13.4 test'
+      - name: Run local publish
+        run: sbt publishLocal
+      - name: Run test coverage
+        run: sbt coverage test
+      - name: Generate coverage report
+        run: sbt coverageReport
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
