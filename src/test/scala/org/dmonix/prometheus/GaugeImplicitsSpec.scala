@@ -23,20 +23,54 @@ class GaugeImplicitsSpec extends Specification with GaugeImplicits with MetricMa
 
   private val expectedValue = "Nunquam non paratus"
 
-  "Measure" >> {
-    val res = gauge().measure{
-      expectedValue
-    }
-    res === expectedValue
-  }
-
-  "Measure Asynch" >> {
-    implicit val ec = sameThreadExecutionContext
-    val f = gauge().measureAsync{
-      Future{
+  "A Gauge" >> {
+    "must 'measure'" >> {
+      val res = gauge().measure {
         expectedValue
       }
+      res === expectedValue
     }
-    f.result()  === expectedValue
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = gauge().measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
+
+    "must reset" >> {
+      val g = gauge()
+      g.inc(123)
+      g.reset().get() === 0
+    }
+  }
+
+  "A Gauge.Child" >> {
+    "must 'measure'" >> {
+      val res = gauge("label").labels("xyz").measure {
+        expectedValue
+      }
+      res === expectedValue
+    }
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = gauge("label").labels("xyz").measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
+
+    "must reset" >> {
+      val g = gauge("label").labels("xyz")
+      g.inc(123)
+      g.reset().get() === 0
+    }
+
   }
 }

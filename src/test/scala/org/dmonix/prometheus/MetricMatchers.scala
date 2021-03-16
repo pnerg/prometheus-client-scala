@@ -17,6 +17,7 @@ trait MetricMatchers {
   }
 
   def gauge():Gauge = Gauge.build("example", "help").register(new CollectorRegistry())
+  def gauge(label:String):Gauge = Gauge.build("example", "help").labelNames(label).register(new CollectorRegistry())
   def histogram():Histogram = Histogram.build("example", "help").register(new CollectorRegistry())
   def summary():Summary = Summary.build("example", "help").register(new CollectorRegistry())
 
