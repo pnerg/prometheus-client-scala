@@ -18,6 +18,7 @@ package org.dmonix.prometheus
 import org.specs2.mutable.Specification
 
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
 class HistogramImplicitsSpec extends Specification with HistogramImplicits with MetricMatchers {
 
@@ -40,6 +41,11 @@ class HistogramImplicitsSpec extends Specification with HistogramImplicits with 
       }
       f.result() === expectedValue
     }
+
+    "must 'record'" >> {
+      histogram().record(5.seconds)
+      ok
+    }
   }
 
   "A Histogram.Child" >> {
@@ -58,6 +64,11 @@ class HistogramImplicitsSpec extends Specification with HistogramImplicits with 
         }
       }
       f.result() === expectedValue
+    }
+
+    "must 'record'" >> {
+      histogram("label").labels("xyz").record(5.seconds)
+      ok
     }
   }
 }

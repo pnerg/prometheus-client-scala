@@ -18,6 +18,7 @@ package org.dmonix.prometheus
 import org.specs2.mutable.Specification
 
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
 class SummaryImplicitsSpec extends Specification with SummaryImplicits with MetricMatchers{
 
@@ -40,7 +41,13 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
       }
       f.result() === expectedValue
     }
+
+    "must 'record'" >> {
+      summary().record(5.seconds)
+      ok
+    }
   }
+
   "A Summary.Child" >> {
     "must 'measure'" >> {
       val res = summary("label").labels("xyz").measure {
@@ -57,6 +64,11 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
         }
       }
       f.result() === expectedValue
+    }
+
+    "must 'record'" >> {
+      summary("label").labels("xyz").record(5.seconds)
+      ok
     }
   }
 }
