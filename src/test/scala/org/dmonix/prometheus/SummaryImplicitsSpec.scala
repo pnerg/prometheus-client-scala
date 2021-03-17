@@ -23,20 +23,40 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
 
   private val expectedValue = "Sic semper tyrannis"
 
-  "Measure" >> {
-    val res = summary().measure{
-      expectedValue
-    }
-    res === expectedValue
-  }
-
-  "Measure Asynch" >> {
-    implicit val ec = sameThreadExecutionContext
-    val f = summary().measureAsync{
-      Future{
+  "A Summary" >> {
+    "must 'measure'" >> {
+      val res = summary().measure {
         expectedValue
       }
+      res === expectedValue
     }
-    f.result()  === expectedValue
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = summary().measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
+  }
+  "A Summary.Child" >> {
+    "must 'measure'" >> {
+      val res = summary("label").labels("xyz").measure {
+        expectedValue
+      }
+      res === expectedValue
+    }
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = summary("label").labels("xyz").measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
   }
 }
