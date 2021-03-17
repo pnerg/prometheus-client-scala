@@ -1,4 +1,5 @@
 [![Build & Test](https://github.com/pnerg/prometheus-client-scala/actions/workflows/scala.yml/badge.svg)](https://github.com/pnerg/prometheus-client-scala/actions/workflows/scala.yml)
+[![codecov](https://codecov.io/gh/pnerg/prometheus-client-scala/branch/master/graph/badge.svg?token=IM8MVJCI95)](https://codecov.io/gh/pnerg/prometheus-client-scala)
 # Prometheus Client Scala
 Adds a Scala layer on the official [Prometheus Java client](https://github.com/prometheus/client_java) library.  
 The purpose is to elevate on the capabilities of the Scala language and provide more fitting constructs. 
