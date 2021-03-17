@@ -23,21 +23,41 @@ class HistogramImplicitsSpec extends Specification with HistogramImplicits with 
 
   private val expectedValue = "Vae victis"
 
-  "Measure" >> {
-    histogram().labels()
-    val res = histogram().measure{
-      expectedValue
-    }
-    res === expectedValue
-  }
-
-  "Measure Asynch" >> {
-    implicit val ec = sameThreadExecutionContext
-    val f = histogram().measureAsync{
-      Future{
+  "A Histogram" >> {
+    "must 'measure'" >> {
+      val res = histogram().measure {
         expectedValue
       }
+      res === expectedValue
     }
-    f.result()  === expectedValue
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = histogram().measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
+  }
+
+  "A Histogram.Child" >> {
+    "must 'measure'" >> {
+      val res = histogram("label").labels("xyz").measure {
+        expectedValue
+      }
+      res === expectedValue
+    }
+
+    "must 'measureAsync'" >> {
+      implicit val ec = sameThreadExecutionContext
+      val f = histogram("label").labels("xyz").measureAsync {
+        Future {
+          expectedValue
+        }
+      }
+      f.result() === expectedValue
+    }
   }
 }
