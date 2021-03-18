@@ -51,13 +51,4 @@ private[prometheus] object Measurable {
     block.andThen{case _ => reportFunc.apply(Duration.fromNanos(System.nanoTime()-start))}(ec)
   }
 
-  /**
-   * Record the duration in the provided unit.
-   * @param observeFunc The function to report the measured duration to
-   * @param duration The duration to register
-   * @param unit The time unit to record the measurement in
-   * @since 1.0
-   */
-  def record(observeFunc:Double=>Unit)(duration: Duration, unit:TimeUnit):Unit = observeFunc.apply(duration.toUnit(unit))
-
 }

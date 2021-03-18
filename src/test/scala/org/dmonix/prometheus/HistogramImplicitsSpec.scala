@@ -15,8 +15,10 @@
  */
 package org.dmonix.prometheus
 
+import io.prometheus.client.Histogram
 import org.specs2.mutable.Specification
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
@@ -26,6 +28,12 @@ import scala.concurrent.duration.DurationInt
 class HistogramImplicitsSpec extends Specification with HistogramImplicits with MetricMatchers {
 
   private val expectedValue = "Vae victis"
+
+  "A Histogram.builder" >> {
+    "must set 'unit'" >> {
+      Histogram.build("name", "description").unit(TimeUnit.MILLISECONDS) must not(beNull)
+    }
+  }
 
   "A Histogram" >> {
     "must 'measure'" >> {

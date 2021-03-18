@@ -15,8 +15,10 @@
  */
 package org.dmonix.prometheus
 
+import io.prometheus.client.Summary
 import org.specs2.mutable.Specification
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
@@ -26,6 +28,12 @@ import scala.concurrent.duration.DurationInt
 class SummaryImplicitsSpec extends Specification with SummaryImplicits with MetricMatchers{
 
   private val expectedValue = "Sic semper tyrannis"
+
+  "A Summary.builder" >> {
+    "must set 'unit'" >> {
+      Summary.build("name", "description").unit(TimeUnit.MILLISECONDS) must not(beNull)
+    }
+  }
 
   "A Summary" >> {
     "must 'measure'" >> {
