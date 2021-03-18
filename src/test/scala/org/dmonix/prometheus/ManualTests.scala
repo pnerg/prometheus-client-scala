@@ -37,10 +37,12 @@ object ManualTests extends App with Implicits {
     import java.util.concurrent.Executors
     import java.util.concurrent.TimeUnit
     val gauge = Gauge.build("gauge", "Measuring ongoing jobs").register()
-    def worker():Runnable = () => {
-      gauge.measure {
-        //fake some job
-        Thread.sleep(5000)
+    def worker():Runnable = new Runnable {
+      override def run(): Unit = {
+        gauge.measure {
+          //fake some job
+          Thread.sleep(5000)
+        }
       }
     }
     val scheduler = Executors.newScheduledThreadPool(2)
