@@ -20,6 +20,9 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
+/**
+ * Tests for [[HistogramImplicits]]
+ */
 class HistogramImplicitsSpec extends Specification with HistogramImplicits with MetricMatchers {
 
   private val expectedValue = "Vae victis"

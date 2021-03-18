@@ -19,6 +19,9 @@ import org.specs2.mutable.Specification
 
 import scala.concurrent.Future
 
+/**
+ * Tests for [[GaugeImplicits]]
+ */
 class GaugeImplicitsSpec extends Specification with GaugeImplicits with MetricMatchers {
 
   private val expectedValue = "Nunquam non paratus"

@@ -2,9 +2,8 @@ import sbt.Keys.publishArtifact
 
 name := "prometheus-client-scala"
 organization := "org.dmonix"
-version := "1.0.0"
-scalaVersion := "2.13.3"
-publishArtifact := false
+version := "1.0.0-SNAPSHOT"
+scalaVersion := "2.13.5"
 
 scalaVersion := "2.13.5"
 crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.5")
@@ -14,10 +13,10 @@ mainClass in (Compile, run) := Some("org.dmonix.prometheus.Main")
 
 libraryDependencies ++= Seq(
     `prometheus-simpleclient`,
-    `prometheus-simpleclient-hotspot`,
-    `prometheus-simpleclient-httpserver`,
     `slf4j-simple`,
     `specs2-core` % Test,
     `specs2-mock` % Test,
-    `specs2-matcher-extra` % Test
+    `specs2-matcher-extra` % Test,
+    `prometheus-simpleclient-hotspot` % Test,
+    `prometheus-simpleclient-httpserver` % Test,
   )

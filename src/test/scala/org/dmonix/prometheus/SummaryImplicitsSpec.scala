@@ -20,6 +20,9 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
+/**
+ * Tests for [[SummaryImplicits]]
+ */
 class SummaryImplicitsSpec extends Specification with SummaryImplicits with MetricMatchers{
 
   private val expectedValue = "Sic semper tyrannis"

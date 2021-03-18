@@ -23,7 +23,7 @@ val result = requestLatency.measure {
 ```
 
 # Usage
-The library provides a few means to use the functionality, either by importing the _implicit_ classes to automatically decorate new functions or use the explicit functions.
+The library provides a few means to use the functionality, either by importing the _implicit_ classes to automatically decorate new functions or to add the traits with implicit declarations to the class.
 
 ## Using traits to add implicit decorations
 Using any of the traits names _*Implicits_ one can import and use any of the decorated functions.  
@@ -60,22 +60,27 @@ val result = requestLatency.measure {
 }
 ```
 
-## Using explicit functions
-If one doesn't fancy using implicit constructs there is the option to use the utility functions directly.   
-Under the hood this is what the implicit constructs do, just masking to add some syntactic sugar.   
-All utility functions are defined in these classes:  
-* Gauge  -> Gauges
-* Histogram -> Histograms
-* Summary -> Summaries
+## Define TimeUnit for latency measurements
+For both `Histogram` and `Summary` one can choose the `TimeUnit` for the metric.   
+By default the unit is set to `TimeUnit.SECONDS` but this can be changed by either:
+* Import the desired unit `import org.dmonix.prometheus.TimeUnitImplicits.MILLISECONDS`
+* Declare an implicit unit in scope `implicit val unit = TimeUnit.SECONDS`
 
-E.g.
 ```
-import org.dmonix.prometheus._
-val requestLatency:Histogram = ...
-val result = Histograms.measure(requestLatency){
-    // Your code here.
+import io.prometheus.client.Histogram
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import org.dmonix.prometheus.TimeUnitImplicits.MILLISECONDS
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val latencyHistogram = Histogram.build("latency", "Measuring some random latency").unit(TimeUnit.MILLISECONDS).exponentialBuckets(5, 3, 8).register()
+
+latencyHistogram.record(5.millis)
+latencyHistogram.record(1.seconds)
+
+latencyHistogram.measureAsync{
+  Future{
+    Thread.sleep(123)
+  }
 }
 ```
-
-
-
