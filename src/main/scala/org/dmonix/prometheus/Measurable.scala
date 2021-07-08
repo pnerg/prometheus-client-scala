@@ -15,9 +15,8 @@
  */
 package org.dmonix.prometheus
 
-import java.util.concurrent.TimeUnit
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Future}
 
 private[prometheus] object Measurable {
 
@@ -34,7 +33,7 @@ private[prometheus] object Measurable {
     try {
       block
     } finally {
-      reportFunc.apply(Duration.fromNanos(System.nanoTime()-start))
+      reportFunc.apply(durationFrom(start))
     }
   }
 
@@ -48,7 +47,13 @@ private[prometheus] object Measurable {
    */
   def measureAsync[T](reportFunc:Duration => Unit)(block: => Future[T])(implicit ec:ExecutionContext): Future[T] = {
     val start = System.nanoTime()
-    block.andThen{case _ => reportFunc.apply(Duration.fromNanos(System.nanoTime()-start))}(ec)
+    block.andThen{case _ => reportFunc.apply(durationFrom(start))}(ec)
   }
 
+  /**
+   * Returns the duration measured in nanos from the provided start time to 'now'
+   * @param start The nano start time
+   * @return
+   */
+  private def durationFrom(start:Long):Duration = Duration.fromNanos(System.nanoTime()-start)
 }
