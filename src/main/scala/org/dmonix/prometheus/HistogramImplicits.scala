@@ -15,11 +15,11 @@
  */
 package org.dmonix.prometheus
 
-import io.prometheus.client.{Gauge, Histogram}
+import io.prometheus.client.Histogram
 
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{Duration, TimeUnit}
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Enriches the ''Histogram'' class with new functions.
@@ -74,7 +74,7 @@ trait HistogramImplicits {
      * @return The result created from the provided function block
      * @since 1.0
      */
-    def measure[T](block: => T):T = Measurable.measure(record)(block)
+    def measure[T](block: => T):T = Histograms.measure(underlying, unit)(block)
 
     /**
      * Measures the time it takes to execute the Future resulting from the provided block of code.
@@ -91,7 +91,7 @@ trait HistogramImplicits {
      * @return The future created from the provided function block
      * @since 1.0
      */
-    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Measurable.measureAsync(record)(block)(ec)
+    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Histograms.measureAsync(underlying, unit)(block)(ec)
 
     /**
      * Record the duration in the unit as set by seen by the implicit unit visible to this class.
@@ -99,10 +99,7 @@ trait HistogramImplicits {
      * @return itself
      * @since 1.0
      */
-    def record(duration: Duration):Histogram = {
-      underlying.observe(duration.toUnit(unit))
-      underlying
-    }
+    def record(duration: Duration):Histogram = Histograms.record(underlying, unit)(duration)
   }
 
   /**
@@ -124,7 +121,7 @@ trait HistogramImplicits {
      * @return The result created from the provided function block
      * @since 1.0
      */
-    def measure[T](block: => T):T = Measurable.measure(record)(block)
+    def measure[T](block: => T):T = Histograms.measure(underlying, unit)(block)
 
     /**
      * Measures the time it takes to execute the Future resulting from the provided block of code.
@@ -141,7 +138,7 @@ trait HistogramImplicits {
      * @return The future created from the provided function block
      * @since 1.0
      */
-    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Measurable.measureAsync(record)(block)(ec)
+    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Histograms.measureAsync(underlying, unit)(block)(ec)
 
     /**
      * Record the duration in the unit as set by seen by the implicit unit visible to this class.
@@ -149,9 +146,6 @@ trait HistogramImplicits {
      * @return itself
      * @since 1.0
      */
-    def record(duration: Duration):Histogram.Child = {
-      underlying.observe(duration.toUnit(unit))
-      underlying
-    }
+    def record(duration: Duration):Histogram.Child = Histograms.record(underlying, unit)(duration)
   }
 }
