@@ -73,7 +73,7 @@ trait SummaryImplicits {
      * @return The result created from the provided function block
      * @since 1.0
      */
-    def measure[T](block: => T):T = Measurable.measure(record)(block)
+    def measure[T](block: => T):T = Summaries.measure(underlying, unit)(block)
 
     /**
      * Measures the time it takes to execute the Future resulting from the provided block of code.
@@ -90,7 +90,7 @@ trait SummaryImplicits {
      * @return The future created from the provided function block
      * @since 1.0
      */
-    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Measurable.measureAsync(record)(block)(ec)
+    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Summaries.measureAsync(underlying, unit)(block)(ec)
 
     /**
      * Record the duration in the provided unit.
@@ -98,10 +98,8 @@ trait SummaryImplicits {
      * @return itself
      * @since 1.0
      */
-    def record(duration: Duration):Summary = {
-      underlying.observe(duration.toUnit(unit))
-      underlying
-    }
+    def record(duration: Duration):Summary = Summaries.record(underlying, unit)(duration)
+
   }
 
   /**
@@ -113,7 +111,7 @@ trait SummaryImplicits {
     /**
      * Measures the time it takes to execute the provided block of code.
      * {{{
-     *   val summary:Summary = ...
+     *   val summary:Summary.Child = ...
      *   val res = summary.measure{
      *     //code goes here
      *   }
@@ -123,12 +121,12 @@ trait SummaryImplicits {
      * @return The result created from the provided function block
      * @since 1.0
      */
-    def measure[T](block: => T):T = Measurable.measure(record)(block)
+    def measure[T](block: => T):T = Summaries.measure(underlying, unit)(block)
 
     /**
      * Measures the time it takes to execute the Future resulting from the provided block of code.
      * {{{
-     *   val summary:Summary = ...
+     *   val summary:Summary.Child = ...
      *   val fut = summary.measureAsync{
      *     Future {
      *       //code goes here
@@ -140,7 +138,7 @@ trait SummaryImplicits {
      * @return The future created from the provided function block
      * @since 1.0
      */
-    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Measurable.measureAsync(record)(block)(ec)
+    def measureAsync[T](block: => Future[T])(implicit ec:ExecutionContext):Future[T] = Summaries.measureAsync(underlying, unit)(block)(ec)
 
     /**
      * Record the duration in the unit as set by ''setDefaultUnit''.
@@ -148,10 +146,7 @@ trait SummaryImplicits {
      * @return itself
      * @since 1.0
      */
-    def record(duration: Duration):Summary.Child = {
-      underlying.observe(duration.toUnit(unit))
-      underlying
-    }
+    def record(duration: Duration):Summary.Child = Summaries.record(underlying, unit)(duration)
 
   }
 }

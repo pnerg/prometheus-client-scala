@@ -15,29 +15,18 @@
  */
 package org.dmonix.prometheus
 
-import io.prometheus.client.Summary
 import org.specs2.mutable.Specification
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 
-/**
- * Tests for [[SummaryImplicits]]
- */
-class SummaryImplicitsSpec extends Specification with SummaryImplicits with MetricMatchers {
-
+class SummariesSpec extends Specification with SummaryImplicits with MetricMatchers {
   private val expectedValue = "Sic semper tyrannis"
-
-  "A Summary.builder" >> {
-    "must set 'unit'" >> {
-      Summary.build("name", "description").unit(TimeUnit.MILLISECONDS) must not(beNull)
-    }
-  }
 
   "A Summary" >> {
     "must 'measure'" >> {
-      val res = summary().measure {
+      val res = Summaries.measure(summary(), TimeUnit.SECONDS) {
         expectedValue
       }
       res === expectedValue
@@ -45,7 +34,7 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
 
     "must 'measureAsync'" >> {
       implicit val ec = sameThreadExecutionContext
-      val f = summary().measureAsync {
+      val f = Summaries.measureAsync(summary(), TimeUnit.SECONDS) {
         Future {
           expectedValue
         }
@@ -54,14 +43,14 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
     }
 
     "must 'record'" >> {
-      summary().record(5.seconds)
+      Summaries.record(summary(), TimeUnit.SECONDS)(5.seconds)
       ok
     }
   }
 
   "A Summary.Child" >> {
     "must 'measure'" >> {
-      val res = summary("label").labels("xyz").measure {
+      val res = Summaries.measure(summary("label").labels("xyz"), TimeUnit.SECONDS) {
         expectedValue
       }
       res === expectedValue
@@ -69,7 +58,7 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
 
     "must 'measureAsync'" >> {
       implicit val ec = sameThreadExecutionContext
-      val f = summary("label").labels("xyz").measureAsync {
+      val f = Summaries.measureAsync(summary("label").labels("xyz"), TimeUnit.SECONDS) {
         Future {
           expectedValue
         }
@@ -78,7 +67,7 @@ class SummaryImplicitsSpec extends Specification with SummaryImplicits with Metr
     }
 
     "must 'record'" >> {
-      summary("label").labels("xyz").record(5.seconds)
+      Summaries.record(summary("label").labels("xyz"), TimeUnit.SECONDS)(5.seconds)
       ok
     }
   }

@@ -111,7 +111,7 @@ trait HistogramImplicits {
     /**
      * Measures the time it takes to execute the provided block of code.
      * {{{
-     *   val histogram:Histogram = ...
+     *   val histogram:Histogram.Child = ...
      *   val res = histogram.measure{
      *     //code goes here
      *   }
@@ -126,7 +126,7 @@ trait HistogramImplicits {
     /**
      * Measures the time it takes to execute the Future resulting from the provided block of code.
      * {{{
-     *   val histogram:Histogram = ...
+     *   val histogram:Histogram.Child = ...
      *   val fut = histogram.measureAsync{
      *     Future {
      *       //code goes here
