@@ -15,7 +15,7 @@
  */
 package org.dmonix.prometheus
 
-import io.prometheus.client.{Gauge, Histogram}
+import io.prometheus.client.{Gauge, Histogram, Summary}
 import io.prometheus.client.exporter.HTTPServer
 
 import java.util.concurrent.TimeUnit
@@ -28,6 +28,7 @@ import scala.concurrent.duration.DurationInt
 object ManualTests extends App with Implicits {
   histogramExample()
   gaugeExample()
+  summaryExample()
 
   new HTTPServer(9095)
   println("Go check metrics at http://localhost:9095")
@@ -54,7 +55,7 @@ object ManualTests extends App with Implicits {
     import org.dmonix.prometheus.TimeUnitImplicits.MILLISECONDS
 
     import scala.concurrent.ExecutionContext.Implicits.global
-    val latencyHistogram = Histogram.build("latency", "Measuring some random latency").unit(TimeUnit.MILLISECONDS).exponentialBuckets(5, 3, 8).register()
+    val latencyHistogram = Histogram.build("latency_histogram", "Measuring some random latency").unit(TimeUnit.MILLISECONDS).exponentialBuckets(5, 3, 8).register()
 
     latencyHistogram.record(5.millis)
     latencyHistogram.record(10.millis)
@@ -63,6 +64,25 @@ object ManualTests extends App with Implicits {
     latencyHistogram.record(1.seconds)
 
     latencyHistogram.measureAsync{
+      Future{
+        Thread.sleep(123)
+      }
+    }
+  }
+
+  private def summaryExample(): Unit = {
+    import org.dmonix.prometheus.TimeUnitImplicits.MILLISECONDS
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val latencySummary = Summary.build("latency_summary", "Measuring some random latency").unit(TimeUnit.MILLISECONDS).register()
+
+    latencySummary.record(5.millis)
+    latencySummary.record(10.millis)
+    latencySummary.record(100.millis)
+    latencySummary.record(1000.millis)
+    latencySummary.record(1.seconds)
+
+    latencySummary.measureAsync{
       Future{
         Thread.sleep(123)
       }
