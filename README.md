@@ -24,6 +24,18 @@ val result = requestLatency.measure {
 }
 ```
 
+Table of Contents
+=================
+
+* [Usage](#usage)
+    * [Using traits to add implicit decorations](#using-traits-to-add-implicit-decorations)
+    * [Using import to add implicit decorations](#using-import-to-add-implicit-decorations)
+    * [Explicit functions](explicit-functions)
+    * [Define TimeUnit for latency measurements](#define-timeunit-for-latency-measurements)
+* [Gauges](#gauges)
+* [Histograms](#histograms)
+* [Summaries](#summaries)
+
 # Usage
 The library provides a few means to use the functionality
 * importing the _implicit_ classes to automatically decorate new functions 
