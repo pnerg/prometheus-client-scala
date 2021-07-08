@@ -9,8 +9,6 @@ scalaVersion := "2.13.5"
 crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.5")
 fork := true //needed to get the java-options set properly during sbt run
 
-mainClass in (Compile, run) := Some("org.dmonix.prometheus.Main")
-
 libraryDependencies ++= Seq(
     `prometheus-simpleclient`,
     `slf4j-simple`,
