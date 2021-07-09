@@ -51,6 +51,40 @@ private[prometheus] object Measurable {
   }
 
   /**
+   * Invokes pre/post functions around the invocation of the code provided block
+   *
+   * @param preFunc  The function to invoke before the provided code block
+   * @param postFunc The function to invoke after the provided code block
+   * @param block    The block of code to execute/measure
+   * @tparam T
+   * @return
+   * @since 1.0
+   */
+  def prePostFunc[T](preFunc: => Unit, postFunc: => Unit)(block: => T): T = {
+    preFunc
+    try {
+      block
+    } finally {
+      postFunc
+    }
+  }
+
+  /**
+   * Invokes pre/post functions before the invocation of the code block and when the future completes
+   * @param preFunc The function to invoke before the provided code block
+   * @param postFunc The function to invoke when the future finishes
+   * @param block The function returning a Future which to measure
+   * @param ec
+   * @tparam T
+   * @return
+   * @since 1.0
+   */
+  def prePostFuncAsync[T](preFunc: => Unit, postFunc:  => Unit)(block: => Future[T])(implicit ec:ExecutionContext): Future[T] = {
+    preFunc
+    block.andThen{case _ => postFunc}(ec)
+  }
+
+  /**
    * Returns the duration measured in nanos from the provided start time to 'now'
    * @param start The nano start time
    * @return

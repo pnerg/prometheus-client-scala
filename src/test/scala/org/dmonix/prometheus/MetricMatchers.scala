@@ -15,7 +15,7 @@
  */
 package org.dmonix.prometheus
 
-import io.prometheus.client.{CollectorRegistry, Gauge, Histogram, Summary}
+import io.prometheus.client.{CollectorRegistry, Counter, Gauge, Histogram, Summary}
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
@@ -33,6 +33,8 @@ trait MetricMatchers {
 
   def gauge():Gauge = Gauge.build("example", "help").register(new CollectorRegistry())
   def gauge(label:String):Gauge = Gauge.build("example", "help").labelNames(label).register(new CollectorRegistry())
+  def counter():Counter = Counter.build("example", "help").register(new CollectorRegistry())
+  def counter(label:String):Counter = Counter.build("example", "help").labelNames(label).register(new CollectorRegistry())
   def histogram():Histogram = Histogram.build("example", "help").register(new CollectorRegistry())
   def histogram(label:String):Histogram = Histogram.build("example", "help").labelNames(label).register(new CollectorRegistry())
   def summary():Summary = Summary.build("example", "help").register(new CollectorRegistry())

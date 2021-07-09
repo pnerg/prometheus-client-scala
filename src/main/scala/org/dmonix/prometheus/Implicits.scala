@@ -38,4 +38,4 @@ object Implicits extends Implicits
  * class FooBar extends Implicits
  * }}}
  */
-trait Implicits extends GaugeImplicits with HistogramImplicits with SummaryImplicits
+trait Implicits extends GaugeImplicits with HistogramImplicits with SummaryImplicits with CounterImplicits

@@ -20,60 +20,54 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Future
 
 /**
- * Tests for [[Gauges]]
+ * Tests for [[CounterImplicits]]
  */
-class GaugesSpec extends Specification with GaugeImplicits with MetricMatchers {
+class CounterImplicitsSpec extends Specification with CounterImplicits with MetricMatchers  {
+  private val expectedValue = "Absens haeres non erit"
 
-  private val expectedValue = "Nunquam non paratus"
-
-  "A Gauge" >> {
-    "must 'measure'" >> {
-      val res = Gauges.measure(gauge()) {
+  "A Counter" >> {
+    "must 'incAfter'" >> {
+      val c = counter()
+      val res = c.incAfter {
         expectedValue
       }
       res === expectedValue
+      c.get() === 1
     }
 
-    "must 'measureAsync'" >> {
+    "must 'incAfterAsync'" >> {
+      val c = counter()
       implicit val ec = sameThreadExecutionContext
-      val f = Gauges.measureAsync(gauge()) {
+      val f = c.incAfterAsync {
         Future {
           expectedValue
         }
       }
       f.result() === expectedValue
-    }
-
-    "must reset" >> {
-      val g = gauge()
-      g.inc(123)
-      Gauges.reset(g).get() === 0
+      c.get() === 1
     }
   }
 
-  "A Gauge.Child" >> {
-    "must 'measure'" >> {
-      val res = Gauges.measure(gauge("label").labels("xyz")) {
+  "A Counter.Child" >> {
+    "must 'incAfter'" >> {
+      val c = counter("label").labels("xyz")
+      val res = c.incAfter {
         expectedValue
       }
       res === expectedValue
+      c.get() === 1
     }
 
-    "must 'measureAsync'" >> {
+    "must 'incAfterAsync'" >> {
+      val c = counter("label").labels("xyz")
       implicit val ec = sameThreadExecutionContext
-      val f = Gauges.measureAsync(gauge("label").labels("xyz")) {
+      val f = c.incAfterAsync {
         Future {
           expectedValue
         }
       }
       f.result() === expectedValue
+      c.get() === 1
     }
-
-    "must reset" >> {
-      val g = gauge("label").labels("xyz")
-      g.inc(123)
-      Gauges.reset(g).get() === 0
-    }
-
   }
 }
