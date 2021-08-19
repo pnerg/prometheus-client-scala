@@ -11,7 +11,6 @@ fork := true //needed to get the java-options set properly during sbt run
 
 libraryDependencies ++= Seq(
     `prometheus-simpleclient`,
-    `slf4j-simple`,
     `specs2-core` % Test,
     `specs2-mock` % Test,
     `specs2-matcher-extra` % Test,
