@@ -15,7 +15,7 @@
  */
 package org.dmonix.prometheus
 
-import io.prometheus.client.{Gauge, Histogram, Summary}
+import io.prometheus.client.{Counter, Gauge, Histogram, Summary}
 import io.prometheus.client.exporter.HTTPServer
 
 import java.util.concurrent.TimeUnit
@@ -26,6 +26,7 @@ import scala.concurrent.duration.DurationInt
  * Some manual tests to play around with metrics and see the results
  */
 object ManualTests extends App with Implicits {
+  metricExample()
   histogramExample()
   gaugeExample()
   summaryExample()
@@ -33,6 +34,24 @@ object ManualTests extends App with Implicits {
   new HTTPServer(9095)
   println("Go check metrics at http://localhost:9095")
   Thread.currentThread().join()
+
+  private def metricExample(): Unit = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val counter = Counter.build("counter", "Measures received jobs").register()
+
+    counter.incAfter{
+      //increases the counter immediately
+      "some result"
+    }
+
+    counter.incAfterAsync{
+      Future {
+        //fake some async job resulting in the counter being updated once the Future completes
+        Thread.sleep(5000)
+        "some result"
+      }
+    }
+  }
 
   private def gaugeExample(): Unit = {
     import java.util.concurrent.Executors

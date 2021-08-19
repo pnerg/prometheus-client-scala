@@ -30,8 +30,10 @@ Table of Contents
 * [Usage](#usage)
     * [Using traits to add implicit decorations](#using-traits-to-add-implicit-decorations)
     * [Using import to add implicit decorations](#using-import-to-add-implicit-decorations)
-    * [Explicit functions](explicit-functions)
+    * [Explicit functions](#explicit-functions)
     * [Define TimeUnit for latency measurements](#define-timeunit-for-latency-measurements)
+    * [Runnable example](#runnable-example)
+* [Counters](#counters)
 * [Gauges](#gauges)
 * [Histograms](#histograms)
 * [Summaries](#summaries)
@@ -112,6 +114,83 @@ latencyHistogram.measureAsync{
 }
 ```
 
+## Runnable example
+The class [ManualTests](src/test/scala/org/dmonix/prometheus/ManualTests.scala) is a runnable example which creates a few example metrics and publishes these on _localhost:9095_.  
+Start the class and inspect the exposed metrics, will be something like
+```scala
+# HELP gauge Measuring ongoing jobs
+# TYPE gauge gauge
+gauge 2.0
+# HELP counter_total Measures received jobs
+# TYPE counter_total counter
+counter_total 2.0
+# HELP latency_histogram_millis Measuring some random latency
+# TYPE latency_histogram_millis histogram
+latency_histogram_millis_bucket{le="5.0",} 1.0
+latency_histogram_millis_bucket{le="15.0",} 2.0
+latency_histogram_millis_bucket{le="45.0",} 2.0
+latency_histogram_millis_bucket{le="135.0",} 4.0
+latency_histogram_millis_bucket{le="405.0",} 4.0
+latency_histogram_millis_bucket{le="1215.0",} 6.0
+latency_histogram_millis_bucket{le="3645.0",} 6.0
+latency_histogram_millis_bucket{le="10935.0",} 6.0
+latency_histogram_millis_bucket{le="+Inf",} 6.0
+latency_histogram_millis_count 6.0
+latency_histogram_millis_sum 2242.098991
+# HELP latency_summary_millis Measuring some random latency
+# TYPE latency_summary_millis summary
+latency_summary_millis_count 6.0
+latency_summary_millis_sum 2239.113056
+# HELP counter_created Measures received jobs
+# TYPE counter_created gauge
+counter_created 1.629358403176E9
+# HELP latency_histogram_millis_created Measuring some random latency
+# TYPE latency_histogram_millis_created gauge
+latency_histogram_millis_created 1.629358403311E9
+# HELP latency_summary_millis_created Measuring some random latency
+# TYPE latency_summary_millis_created gauge
+latency_summary_millis_created 1.629358403334E9
+```
+
+# Counters
+The _counter_ is a metric that can only increase, e.g. received requests.  
+This library adds the possibility to automatically increase a counter metric around a function, useful for incrementing the counter once a function/job has finished.  
+E.g.
+```scala
+import org.dmonix.prometheus.Implicits._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val counter = Counter.build("example", "Measures received jobs").register()
+
+//the counter is automatically increased when exiting the scope
+val result:String = counter.incAfter {
+  //your code that does something
+  "example result"
+}
+
+//same as above just not using implicits
+val result:String = Counters.incAfter(counter) {
+  //your code that does something
+  "example result"
+}
+
+//the counter is automatically when the Future completes
+val result:Future[String] = counter.incAfterAsync {
+  Future {
+    //your code that does something
+    "example result"
+  }
+}
+
+//same as above just not using implicits
+val result:Future[String] = Counters.incAfterAsync(counter) {
+  Future {
+    //your code that does something
+    "example result"
+  }
+}
+```
+
 # Gauges
 The _gauge_ is a metric that can both increase/decrease, e.g. ongoing requests.  
 This library adds the possibility to automatically increase/decrease a gauge metric around a function, useful for keeping track on parallel jobs.  
@@ -120,7 +199,7 @@ E.g.
 import org.dmonix.prometheus.Implicits._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-val gauge = Gauge.build("gauge", "Measuring ongoing jobs").register()
+val gauge = Gauge.build("example", "Measuring ongoing jobs").register()
 
 //the gauge is automatically increased when entering the scope of 'measure' and decreased when exiting
 val result:String = gauge.measure {
