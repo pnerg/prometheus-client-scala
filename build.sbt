@@ -2,7 +2,7 @@ import sbt.Keys.publishArtifact
 
 name := "prometheus-client-scala"
 organization := "org.dmonix"
-version := "1.0.0"
+version := "1.1.0"
 scalaVersion := "2.13.5"
 
 scalaVersion := "2.13.5"
