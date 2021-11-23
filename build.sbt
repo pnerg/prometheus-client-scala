@@ -5,8 +5,8 @@ organization := "org.dmonix"
 version := "1.1.0"
 scalaVersion := "2.13.7"
 
-scalaVersion := "2.13.7"
-crossScalaVersions := Seq("2.11.12", "2.12.13", "2.13.7")
+scalaVersion := "2.13.5"
+crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.5")
 fork := true //needed to get the java-options set properly during sbt run
 
 libraryDependencies ++= Seq(
