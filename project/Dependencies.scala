@@ -4,7 +4,7 @@ import sbt._
 object Dependencies extends AutoPlugin {
 
   object autoImport {
-    val `prometheus-simpleclient` = "io.prometheus" % "simpleclient" % "0.12.0"
+    val `prometheus-simpleclient` = "io.prometheus" % "simpleclient" % "0.14.0"
     val `prometheus-simpleclient-hotspot` = "io.prometheus" % "simpleclient_hotspot" % `prometheus-simpleclient`.revision
     val `prometheus-simpleclient-httpserver` = "io.prometheus" % "simpleclient_httpserver" % `prometheus-simpleclient`.revision
 
