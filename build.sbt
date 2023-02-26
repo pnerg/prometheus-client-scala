@@ -4,7 +4,7 @@ name := "prometheus-client-scala"
 organization := "org.dmonix"
 version := "1.2.0"
 
-scalaVersion := "2.13.7"
+scalaVersion := "2.13.10"
 crossScalaVersions := Seq("2.11.12", "2.12.17", scalaVersion.value)
 fork := true //needed to get the java-options set properly during sbt run
 
